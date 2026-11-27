@@ -69,9 +69,9 @@ one app for Apple Silicon and Intel Macs, built by GitHub Actions from the tagge
 They aren't signed with an Apple Developer ID, so the first time you open Daymark macOS refuses
 and says it can't verify the app. If you trust it, open **System Settings → Privacy & Security**
 right after that attempt, click **Open Anyway** next to the message about Daymark, and confirm.
-The release notes have the full steps, including what to do if macOS says the app "is damaged". A downloaded
-build also uses Daymark's own reminder cards instead of Notification Center. Building it yourself
-(below) avoids both.
+The release notes have the full steps, including what to do if macOS says the app "is damaged".
+A downloaded build also uses Daymark's own reminder cards instead of Notification Center.
+Building it yourself (below) avoids both.
 
 You still need your own Google OAuth client: follow step 1 below, then "First launch".
 

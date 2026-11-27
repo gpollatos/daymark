@@ -50,7 +50,7 @@ jobs:
           info="$(codesign -dvv "$APP" 2>&1)"
           grep -q "Signature=adhoc" <<<"$info"
           grep -q "TeamIdentifier=not set" <<<"$info"
-          ! grep -q "Authority=" <<<"$info"
+          if grep -q "Authority=" <<<"$info"; then echo "::error::app is signed with a certificate"; exit 1; fi
           test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Contents/Info.plist")" = "${GITHUB_REF_NAME#v}"
           test -s "$APP/Contents/Resources/AppIcon.icns"
           # No builder paths (home folders) left in the binary.
@@ -67,7 +67,7 @@ jobs:
           cat "$ZIP.sha256"
           # Unzip it the way any archiver would and make sure the result is still valid.
           rm -rf check && mkdir check && unzip -q "$ZIP" -d check
-          ! find check -name '._*' | grep -q .
+          if find check -name '._*' | grep -q .; then echo "::error::AppleDouble (._) file in the zip"; exit 1; fi
           codesign --verify --strict --deep check/Daymark.app
 
       - name: Create draft release
