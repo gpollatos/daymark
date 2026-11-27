@@ -120,10 +120,18 @@ TZ=Pacific/Auckland swift test      # also run under another zone when touching 
 - **New behaviour needs a test that fails if the behaviour is removed.** Check it by breaking the
   line deliberately and running the suite.
 
+## Demo mode
+
+`open -n /Applications/Daymark.app --args --demo` (or `DAYMARK_DEMO=1`) runs the real app with
+`AppEnvironment.demo`: three fictional accounts on reserved `example` domains, and an in-memory
+fake Google seeded with a week of events around today (`App/DemoMode.swift`). Use it to check UI
+changes and to take screenshots. **Never put real people, emails or meetings in screenshots,
+fixtures or docs; use demo mode.**
+
 ## UI changes
 
-- SwiftUI views aren't unit-tested. After UI work, build and run the real app
-  (`./scripts/build-app.sh --install`, then open it) and check the change visually.
+- SwiftUI views aren't unit-tested. After UI work, build and run the app
+  (`./scripts/build-app.sh --install`), preferably in demo mode, and check the change visually.
 - A rebuild signed ad hoc makes macOS show a Keychain access prompt that blocks the app until the
   user answers. Never click security prompts on the user's behalf.
 - When checking interactions manually, don't drag, edit or delete the user's real events: writes

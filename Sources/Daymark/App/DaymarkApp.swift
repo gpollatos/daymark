@@ -4,7 +4,7 @@ import SwiftUI
 @main
 struct DaymarkApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
-    @State private var store = CalendarStore()
+    @State private var store = CalendarStore(env: DemoMode.isEnabled ? .demo : nil)
 
     var body: some Scene {
         WindowGroup("Daymark", id: "main") {

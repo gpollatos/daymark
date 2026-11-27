@@ -15,7 +15,8 @@ All project guidance lives in AGENTS.md, so other coding agents see the same rul
   - Clicks via System Events `click at` are accessibility presses, not mouse events. SwiftUI
     gestures (grid click, drag) need real `CGEvent` mouse events.
   - Don't release a drag or press Save on the user's real events; that writes to their Google
-    Calendar.
+    Calendar. Use demo mode (`open -n /Applications/Daymark.app --args --demo`) for interactive
+    checks and screenshots.
 - **Prompts that wait for the user:**
   - If the app doesn't respond after a rebuild, check for a `SecurityAgent` window. That's a
     Keychain prompt waiting for the user. Tell them; never answer it yourself.

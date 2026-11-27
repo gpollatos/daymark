@@ -4,7 +4,7 @@
 <dict>
     <key>CFBundleName</key><string>Daymark</string>
     <key>CFBundleDisplayName</key><string>Daymark</string>
-    <key>CFBundleIdentifier</key><string>local.daymark.calendar</string>
+    <key>CFBundleIdentifier</key><string>io.github.gpollatos.daymark</string>
     <key>CFBundleExecutable</key><string>Daymark</string>
     <key>CFBundleIconFile</key><string>AppIcon</string>
     <key>CFBundlePackageType</key><string>APPL</string>

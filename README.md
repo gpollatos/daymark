@@ -3,6 +3,8 @@
 A native macOS calendar app that works like the Google Calendar app on iPhone. Sign in to each of
 your Google accounts, and all of their calendars appear together in one window.
 
+![Daymark's week view, showing three accounts' calendars together (demo data)](docs/screenshot.png)
+
 - Native SwiftUI, macOS 14 or later.
 - No server and no database. Events are fetched live from the Google Calendar API and kept in
   memory only; Daymark's network connection keeps no cache or cookies on disk.
@@ -58,6 +60,18 @@ Keyboard shortcuts:
 - Xcode, or the Xcode Command Line Tools, with Swift 5.10 or later. Install Xcode from the
   App Store, open it once, then check that `swift --version` works in Terminal.
 - A Google account. Any number of accounts can be added later.
+
+## Try it without a Google account
+
+Daymark has a demo mode with three fictional accounts and a week of made-up events. Nothing
+touches your Keychain, the network or your real calendars, and nothing is saved. After building
+(see "Build and install" below):
+
+```sh
+open -n /Applications/Daymark.app --args --demo
+```
+
+The screenshot above was taken in demo mode.
 
 ## 1. Create your Google OAuth client (once)
 
@@ -177,7 +191,7 @@ To start it at login: System Settings → General → Login Items → add Daymar
 ```
 Sources/Daymark/
   App/        DaymarkApp (entry point, menus), AppEnvironment (injectable dependencies),
-              Notifier (reminders: Notification Center or in-app cards)
+              Notifier (reminders: Notification Center or in-app cards), DemoMode
   Store/      CalendarStore: all app state, multi-account loading, writes, search, reminders
   API/        GoogleCalendarAPI (REST client: retries, paging, encoding), HTTP (no-cache
               session), DTOs (wire types)
@@ -238,6 +252,7 @@ world is three accounts at noon on 26 Nov 2026 in New York, including:
 | `NavigationAndSearchTests` | Loading windows, navigation, search |
 | `DateAndLayoutTests`, `FormattingTests` | DST and time zones, day layout, parsing, text shown in the app, the vault |
 | `PrivacyTests` | Nothing cached on disk; only web links opened |
+| `DemoModeTests` | Demo mode loads fictional data and works without Google |
 
 ## Limitations
 
@@ -248,6 +263,10 @@ world is three accounts at noon on 26 Nov 2026 in New York, including:
 - The Schedule view shows two months at a time.
 - A meeting you're invited to in two of your accounts appears twice, as in the iPhone app.
 - Reminders fire only while Daymark is running.
+
+## Security
+
+To report a security problem, see [SECURITY.md](SECURITY.md). Please don't open a public issue.
 
 ## Not affiliated with Google
 
