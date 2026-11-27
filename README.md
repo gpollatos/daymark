@@ -146,9 +146,13 @@ To get a free certificate (once):
    Apple's current intermediate certificate. Download **Worldwide Developer Relations – G3** from
    https://www.apple.com/certificateauthority/ (`AppleWWDRCAG3.cer`), double-click it to add it to
    your login keychain, and check again.
-4. Rebuild with `./scripts/build-app.sh --install`. It finds the certificate and prints
-   `Signed with: Apple Development: …`. If macOS asks whether `codesign` may use the key, enter
-   your password and click **Always Allow**.
+4. Rebuild with `./scripts/build-app.sh --install`. It finds your certificate and prints
+   `Signed with your Apple Development certificate`. If macOS asks whether `codesign` may use the
+   key, enter your password and click **Always Allow**.
+
+The build always uses the certificate in **your** Keychain. Nothing about anyone else's
+certificate is in this repository. Don't share a built `Daymark.app`, though: it's signed with
+your certificate, which contains your Apple ID email and team ID.
 
 ## 3. First launch
 
