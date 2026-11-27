@@ -61,6 +61,20 @@ Keyboard shortcuts:
   App Store, open it once, then check that `swift --version` works in Terminal.
 - A Google account. Any number of accounts can be added later.
 
+## Download
+
+Ready-built versions are on the [Releases page](https://github.com/gpollatos/daymark/releases):
+one app for Apple Silicon and Intel Macs, built by GitHub Actions from the tagged source.
+
+They aren't signed with an Apple Developer ID, so the first time you open Daymark macOS refuses
+and says it can't verify the app. If you trust it, open **System Settings → Privacy & Security**
+right after that attempt, click **Open Anyway** next to the message about Daymark, and confirm.
+The release notes have the full steps, including what to do if macOS says the app "is damaged". A downloaded
+build also uses Daymark's own reminder cards instead of Notification Center. Building it yourself
+(below) avoids both.
+
+You still need your own Google OAuth client: follow step 1 below, then "First launch".
+
 ## Try it without a Google account
 
 Daymark has a demo mode with three fictional accounts and a week of made-up events. Nothing
@@ -114,6 +128,10 @@ cd daymark
 swift test                          # optional: run the test suite
 ./scripts/build-app.sh --install    # builds Daymark.app and copies it to /Applications
 ```
+
+Options for the build script: `DAYMARK_UNIVERSAL=1` (Apple Silicon + Intel),
+`DAYMARK_VERSION=1.2.3`, `DAYMARK_SIGN=adhoc` (never use a personal certificate). Releases are
+built with all three.
 
 The script builds a release binary, wraps it in `build/Daymark.app`, generates the app icon on the
 first run, signs the app and, with `--install`, copies it to `/Applications`. If copying there
@@ -211,6 +229,7 @@ Tests/DaymarkTests/
               World (fixtures)
   *.swift     test suites, grouped by area (see Tests below)
 scripts/      build-app.sh (bundle, sign, install), make-icon.swift
+.github/      CI (test.yml), draft releases on version tags (release.yml), Dependabot
 Resources/    Info.plist
 ```
 

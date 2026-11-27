@@ -17,6 +17,11 @@ TZ=Pacific/Auckland swift test      # also run under another zone when touching 
 - Swift tools 5.10, Swift 5 language mode, macOS 14+.
 - Keep the build free of warnings, including in tests. CI (`.github/workflows/test.yml`) builds
   with `-warnings-as-errors`.
+- Releases: pushing a `vX.Y.Z` tag runs `.github/workflows/release.yml`. It tests, builds a
+  universal ad-hoc app (`DAYMARK_UNIVERSAL=1 DAYMARK_SIGN=adhoc DAYMARK_VERSION=…`), checks that
+  no builder paths are left in it, and creates a **draft** release with
+  `.github/RELEASE_NOTES.md`. Publish the draft after checking it. Never attach a locally built
+  app: it's signed with a personal certificate and built from your own folders.
 - There is no Xcode project; SwiftPM only. The `.app` bundle is assembled by `scripts/build-app.sh`
   from `Resources/Info.plist`.
 

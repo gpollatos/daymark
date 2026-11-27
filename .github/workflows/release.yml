@@ -1,0 +1,85 @@
+name: Release
+
+# Pushing a version tag (`git tag -a v1.0.0 -m "Daymark 1.0.0" && git push origin v1.0.0`) tests,
+# builds a universal, ad-hoc signed Daymark.app and creates a DRAFT GitHub Release with it.
+# Check the draft, then publish it on GitHub (or `gh release edit vX.Y.Z --draft=false`).
+# No personal signing certificate is involved: the runner has none, and DAYMARK_SIGN=adhoc
+# enforces it.
+
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: macos-latest
+    timeout-minutes: 30
+    steps:
+      - name: Check the tag is a plain version (vX.Y.Z)
+        run: |
+          [[ "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "::error::Tag must look like v1.2.3, got $GITHUB_REF_NAME"; exit 1; }
+
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Build and test (warnings are errors)
+        run: |
+          swift build --build-tests -Xswiftc -warnings-as-errors
+          swift test
+
+      - name: Build universal app
+        env:
+          DAYMARK_UNIVERSAL: "1"
+          DAYMARK_SIGN: adhoc
+          DAYMARK_VERSION: ${{ github.ref_name }}
+          DAYMARK_BUILD_NUMBER: ${{ github.run_number }}
+        run: ./scripts/build-app.sh
+
+      - name: Check the app
+        run: |
+          set -euo pipefail
+          APP=build/Daymark.app
+          BIN="$APP/Contents/MacOS/Daymark"
+          lipo "$BIN" -verify_arch arm64
+          lipo "$BIN" -verify_arch x86_64
+          codesign --verify --strict --deep "$APP"
+          info="$(codesign -dvv "$APP" 2>&1)"
+          grep -q "Signature=adhoc" <<<"$info"
+          grep -q "TeamIdentifier=not set" <<<"$info"
+          ! grep -q "Authority=" <<<"$info"
+          test "$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' "$APP/Contents/Info.plist")" = "${GITHUB_REF_NAME#v}"
+          test -s "$APP/Contents/Resources/AppIcon.icns"
+          # No builder paths (home folders) left in the binary.
+          if grep -a -q "/Users/" "$BIN"; then echo "::error::binary contains /Users/ paths"; exit 1; fi
+
+      - name: Package
+        run: |
+          set -euo pipefail
+          ZIP="Daymark-${GITHUB_REF_NAME}.zip"
+          # No resource forks / extended attributes: their ._ files would break the app's seal
+          # when someone unzips with a non-Apple tool, and macOS would then call it "damaged".
+          ditto -c -k --keepParent --norsrc --noextattr --noqtn build/Daymark.app "$ZIP"
+          shasum -a 256 "$ZIP" > "$ZIP.sha256"
+          cat "$ZIP.sha256"
+          # Unzip it the way any archiver would and make sure the result is still valid.
+          rm -rf check && mkdir check && unzip -q "$ZIP" -d check
+          ! find check -name '._*' | grep -q .
+          codesign --verify --strict --deep check/Daymark.app
+
+      - name: Create draft release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          notes="$(cat .github/RELEASE_NOTES.md)"
+          printf '%s\n' "${notes//\{\{VERSION\}\}/$GITHUB_REF_NAME}" > notes.md
+          # Re-running a failed release replaces its leftover draft.
+          if gh release view "$GITHUB_REF_NAME" --json isDraft --jq .isDraft 2>/dev/null | grep -q true; then
+            gh release delete "$GITHUB_REF_NAME" --yes
+          fi
+          gh release create "$GITHUB_REF_NAME" "Daymark-${GITHUB_REF_NAME}.zip" "Daymark-${GITHUB_REF_NAME}.zip.sha256" \
+            --title "Daymark ${GITHUB_REF_NAME}" --notes-file notes.md --verify-tag --draft
