@@ -1,0 +1,19 @@
+name: Test
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Swift version
+        run: swift --version
+      - name: Build (warnings are errors)
+        run: swift build --build-tests -Xswiftc -warnings-as-errors
+      - name: Test
+        run: swift test
+      - name: Test in another time zone
+        run: TZ=Pacific/Auckland swift test

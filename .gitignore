@@ -1,0 +1,55 @@
+# --- Swift Package Manager ---
+.build/
+.swiftpm/
+Packages/
+Package.resolved.orig
+*.resolved.orig
+
+# --- Daymark build output (scripts/build-app.sh) ---
+build/
+*.app
+*.icns
+*.iconset/
+
+# --- Xcode ---
+*.xcodeproj/
+*.xcworkspace/
+!*.xcworkspace/contents.xcworkspacedata
+xcuserdata/
+DerivedData/
+*.xcuserstate
+*.xccheckout
+*.moved-aside
+*.hmap
+*.ipa
+*.dSYM
+*.dSYM.zip
+timeline.xctimeline
+playground.xcworkspace
+
+# --- Secrets: never commit OAuth client files, keys or certificates ---
+client_secret*.json
+credentials*.json
+*.p12
+*.pem
+*.cer
+*.key
+*.mobileprovision
+*.provisionprofile
+.env
+.env.*
+
+# --- macOS ---
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+._*
+.Spotlight-V100
+.Trashes
+
+# --- Editors ---
+.vscode/
+.idea/
+*.swp
+*~
